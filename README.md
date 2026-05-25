@@ -1,71 +1,86 @@
-# Breathe ESG - Data Ingestion Prototype
+<div align="center">
+  <h1>🌱 Breathe ESG — Data Ingestion Pipeline</h1>
+  <p><b>Multi-tenant ESG data ingestion and normalization prototype</b></p>
+  
+  <a href="https://breathe-esg-data-ingestion.vercel.app"><b>Frontend Live Demo</b></a> • 
+  <a href="https://breathe-esg-api-qxqm.onrender.com/api/sources/"><b>Backend API Demo</b></a>
 
-This repository contains the solution for the Breathe ESG Tech Intern Assignment.
+  <br><br>
 
-## Live Demo
-- **Frontend App**: [https://breathe-esg-data-ingestion.vercel.app](https://breathe-esg-data-ingestion.vercel.app)
-- **Backend API**: [https://breathe-esg-api-qxqm.onrender.com/api/sources/](https://breathe-esg-api-qxqm.onrender.com/api/sources/)
+  ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+  ![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
+  ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+  ![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=green)
+  ![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
 
-## Architecture
-- **Backend**: Django REST Framework (SQLite for prototype simplicity)
-- **Frontend**: React (Vite, TypeScript, Vanilla CSS)
+</div>
 
-## Core Deliverables Included
-1. **MODEL.md**: Explanation of the normalized database schema, multi-tenancy, and audit traceability.
-2. **DECISIONS.md**: Justifications for ambiguous choices (e.g., date formats, ingestion mechanisms).
-3. **TRADEOFFS.md**: What was intentionally excluded (complex parsing, RBAC, live emissions calculations).
-4. **SOURCES.md**: Research on SAP, Utility, and Travel data, and why the specific formats were chosen.
+<br>
 
-## Running Locally
+> **The Problem:** ESG analysts spend hours wrestling with fragmented client data—SAP procurement logs, PG&E utility scrapes, and Concur travel exports. 
+> 
+> **The Solution:** A unified ingestion pipeline that ingests disparate formats, extracts the carbon-relevant variables, standardizes the metrics, and presents them in a clean, auditable review dashboard.
 
-### Backend (Django)
-1. `cd backend`
-2. `pip install -r requirements.txt`
-3. `python manage.py makemigrations api`
-4. `python manage.py migrate`
-5. `python seed.py` (Seeds the database with default Tenant and 3 Data Sources)
-6. `python manage.py runserver` (Runs on port 8000)
+---
 
-### Frontend (React)
-1. `cd frontend`
-2. `npm install`
-3. `npm run dev` (Runs on port 5173)
+## 🏗 Engineering Philosophy & Deliverables
 
-## Deployment Notes
+To evaluate this assignment, please review the specific architectural markdown documents included in this repository. They detail the "why" behind the code:
 
-The project is deployment-ready and can be hosted using Render (backend) and Vercel (frontend). Example deployment steps are provided below.
+* 🗄️ [**MODEL.md**](MODEL.md) — Explains the normalized database schema, multi-tenancy design, and the critical decision to store immutable `raw_data` JSON for ultimate audit traceability.
+* ⚖️ [**TRADEOFFS.md**](TRADEOFFS.md) — Honest engineering trade-offs regarding why certain features (like async workers, RBAC, and live emission engines) were intentionally scoped out to prioritize a robust ingestion core.
+* 🤔 [**DECISIONS.md**](DECISIONS.md) — How system ambiguities (like parsing different regional date formats `DD.MM.YYYY` vs `MM/DD/YYYY`) were handled.
+* 🔍 [**SOURCES.md**](SOURCES.md) — Research on SAP, Utility, and Corporate Travel data structures.
 
-### Option 1: Render (Recommended for Backend)
-1. Create a GitHub repository and push this code.
-2. Go to [Render](https://render.com) and create a new **Web Service**.
-3. Connect your GitHub repo.
-4. Set the **Root Directory** to `backend`.
-5. Set the **Build Command** to: `pip install -r requirements.txt && python manage.py migrate && python seed.py`
-6. Set the **Start Command** to: `gunicorn backend.wsgi:application`
-7. Copy the backend deployment URL.
+---
 
-### Option 2: Vercel (Recommended for Frontend)
-1. Go to [Vercel](https://vercel.com) and import the same GitHub repository.
-2. Set the **Root Directory** to `frontend`.
-3. Add an Environment Variable: `VITE_API_URL` and set it to your deployed Render URL (e.g., `https://my-backend.onrender.com/api`).
-4. Click Deploy.
+## ✨ Core Features
 
-### Post-Deployment
-1. Make sure to share the GitHub repo with `saurav@breatheesg.com`, `rahul@breatheesg.com`, and `shivang@breatheesg.com`.
-2. Reply to the email with the deployed Vercel URL and the repo link.
+* **Source-Specific Normalization:** Upload a raw CSV; the backend dynamically routes it through a parser based on the `DataSource` (SAP, Utility, or Travel).
+* **Audit-First Design:** Analysts can trace any normalized row back to its exact `source_row_number` and inspect the original JSON payload.
+* **Idempotency Ready:** Every row generates a deterministic SHA-256 `deduplication_key` to prevent double-counting carbon emissions.
+* **Graceful Failure Handling:** Malformed rows aren't dropped; they are flagged with `validation_errors` and set to `PENDING_REVIEW` so analysts can manually intervene.
 
-## Using the App
-1. Open the deployed frontend.
-2. Under **Ingest Data**, select a data source (e.g., "SAP ERP").
-3. Upload a sample CSV file that matches the source format (you can create simple CSVs based on the `SOURCES.md` definitions).
-4. The data will normalize and appear in the **Review & Approve Data** table.
-5. Click **Approve** or **Reject** to simulate the analyst workflow.
+---
 
-## Future Improvements
-- Automated schema detection for unknown CSV formats
-- Background ingestion workers (e.g., Celery/SQS) for async processing
-- Emission factor engine integration
-- PDF/OCR ingestion pipeline
-- Role-based access control
-- Data lineage dashboard
-- Enforcing duplicate upload detection using the `deduplication_key`
+## 🚀 Quick Start (Local Development)
+
+### 1. Backend Setup (Django)
+```bash
+cd backend
+pip install -r requirements.txt
+python manage.py makemigrations api
+python manage.py migrate
+python seed.py          # Seeds the DB with a default Tenant and 3 Data Sources
+python manage.py runserver 
+```
+*The API will run on `http://127.0.0.1:8000`*
+
+### 2. Frontend Setup (React/Vite)
+Open a new terminal tab:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+*The dashboard will run on `http://localhost:5173`*
+
+---
+
+## 🧪 How to Test the App
+
+1. Open the UI.
+2. Select a **Data Source** from the dropdown (e.g., *SAP ERP Procurement*).
+3. Click to upload a file and select the corresponding CSV from the `samples/` directory (e.g., `samples/sap_sample.csv`).
+4. Watch the table automatically populate with parsed, standardized data assigned to correct Scopes (Scope 1, 2, 3).
+5. Simulate the analyst workflow by clicking **Approve** or **Reject** on `PENDING_REVIEW` rows.
+
+---
+
+## 🗺️ Production Roadmap (Future Improvements)
+
+If this prototype were scaled to production, the next immediate phases would be:
+- **Async Processing:** Offload CSV parsing to background workers (Celery/SQS) to prevent HTTP timeouts on multi-megabyte uploads.
+- **Dynamic Emission Engine:** Connect the normalized `ActivityData` volumes to a live factor database (e.g., EPA, DEFRA) to compute actual `kgCO2e`.
+- **Advanced Observability:** Pipe parser exceptions and ingestion latency metrics into Datadog/Prometheus.
+- **Role-Based Access Control:** Implement JWT-based auth separating Data Providers (uploaders) from Analysts (reviewers).
