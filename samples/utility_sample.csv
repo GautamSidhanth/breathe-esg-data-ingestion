@@ -1,0 +1,3 @@
+Account_Number,Meter_ID,Start_Date,End_Date,Usage,Usage_Unit,Cost
+ACC-991,M-1029,04/12/2026,05/11/2026,45000,kWh,4100.50
+ACC-992,M-1030,04/12/2026,05/11/2026,32000,kWh,3200.00

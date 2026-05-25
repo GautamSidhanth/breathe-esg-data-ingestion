@@ -1,0 +1,3 @@
+Employee_ID,Booking_ID,Segment_Type,Origin,Destination,Cabin_Class,Distance_km,Date
+EMP-001,BKG-881,Flight,SFO,JFK,Economy,4156,2026-05-10
+EMP-002,BKG-882,Flight,LHR,CDG,Business,344,2026-05-12
