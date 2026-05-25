@@ -2,6 +2,10 @@
 
 This repository contains the solution for the Breathe ESG Tech Intern Assignment.
 
+## Live Demo
+- **Frontend App**: [https://breathe-esg-data-ingestion.vercel.app](https://breathe-esg-data-ingestion.vercel.app)
+- **Backend API**: [https://breathe-esg-api-qxqm.onrender.com/api/sources/](https://breathe-esg-api-qxqm.onrender.com/api/sources/)
+
 ## Architecture
 - **Backend**: Django REST Framework (SQLite for prototype simplicity)
 - **Frontend**: React (Vite, TypeScript, Vanilla CSS)
